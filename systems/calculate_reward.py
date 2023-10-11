@@ -6,9 +6,18 @@ from entities.terrain import Terrain
 
 
 def calculate_reward(player: Player, terrain: Terrain, platform: Platform | None):
+    # if the player touched the landscape, game over with very negative reward
+    if terrain.player_intersects_terrain(player):
+        player.score = -100
     # if the player touched a platform, give a reward
-    if platform:
-        player.score = 10
+    elif platform:
+        # if player is moving too fast, they crash and get a negative reward
+        if player.vel.length() > 5:
+            player.score = -5 - player.vel.length()
+        # else, give a positive reward, inversely proportional to the velocity
+        else:
+            velocity_bonus = 5 - player.vel.length()
+            player.score = 10 + velocity_bonus
     # else, scale the distance between the previous and next platform to 0-1
     # then calculate the reward as the player gets closer to the next platform
     else:

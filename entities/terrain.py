@@ -1,10 +1,11 @@
 import numpy as np
+import opensimplex
 import pygame
 import shapely
 
 
 class Terrain:
-    def __init__(self, scaling, scene_width, scene_height):
+    def __init__(self, scaling, seed, scene_width, scene_height):
         self.scene_width = scene_width
         self.scene_height = scene_height
 
@@ -15,6 +16,7 @@ class Terrain:
         self.scaling = scaling
         self.offset = 0
 
+        self.noise_generator = opensimplex.OpenSimplex(seed=seed)
         self.x = np.array([])
         self.y = np.array([])
 

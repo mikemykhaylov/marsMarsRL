@@ -2,6 +2,7 @@ import pygame
 
 from entities.player import Player
 from entities.terrain import Terrain
+from systems.calculate_reward import calculate_reward
 
 
 def process_collisions(player: Player, terrain: Terrain):
@@ -12,17 +13,20 @@ def process_collisions(player: Player, terrain: Terrain):
         player.color = "#3D93AF"
 
     platform = terrain.player_intersects_platform(player)
-    if not platform:
-        return None
 
-    player.vel.x = 0
-    player.vel.y = 0
+    if not platform:
+        calculate_reward(player, terrain, None)
+        return
+
     player.pos = platform.get_center() - pygame.Vector2(
         0, platform.platform_height / 2 + player.radius
     )
-    player.fuel = min(1000, player.fuel + 20)
 
-    if not platform.visited:
+    if platform.visited:
+        calculate_reward(player, terrain, None)
+    else:
+        calculate_reward(player, terrain, platform)
+
         platform.visited = True
 
         terrain.prev_player_platform = platform
@@ -33,5 +37,8 @@ def process_collisions(player: Player, terrain: Terrain):
         )
         next_platform = min(next_platform, key=lambda p: p.pos.x)
         terrain.next_player_platform = next_platform
-        return platform
-    return None
+        return
+
+    player.vel.x = 0
+    player.vel.y = 0
+    player.fuel = min(1000, player.fuel + 20)

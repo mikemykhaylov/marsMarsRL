@@ -1,4 +1,3 @@
-import numpy as np
 import pygame
 import shapely
 
@@ -6,18 +5,13 @@ from entities.player import Player
 from entities.terrain import Terrain
 
 
-def produce_observations(player: Player, terrain: Terrain):
-    observations = {
-        "player_pos": np.array([player.pos.x, player.pos.y]),
-        "player_vel": np.array([player.vel.x, player.vel.y]),
-        "fuel": player.fuel,
-    }
-
-    ray_distances = np.array([])
-
+def debug_raycasting(
+    screen: pygame.Surface, player: Player, terrain: Terrain, font: pygame.font.Font
+):
     for i in range(0, 360, 10):
         unit_v = pygame.Vector2(0, -1000).rotate(i) + player.pos
         # draw the line
+        pygame.draw.aaline(screen, "white", player.pos, unit_v, 1)
         ray = shapely.LineString([player.pos, unit_v])
         intersection = terrain.terrain_intersects_shape(ray)
         if intersection is not False:
@@ -29,13 +23,16 @@ def produce_observations(player: Player, terrain: Terrain):
             elif isinstance(intersection, shapely.geometry.LineString):
                 intersection = intersection.coords[0]
 
-            distance_to_intersection = player.pos.distance_to(intersection)
-            ray_distances = np.append(ray_distances, distance_to_intersection)
-        else:
-            ray_distances = np.append(ray_distances, 1000)
+            pygame.draw.circle(screen, "red", intersection, 5)
 
-    observations["distances"] = ray_distances
-    observations["next_platform"] = np.array(
-        [terrain.next_player_platform.pos.x, terrain.next_player_platform.pos.y]
-    )
-    return observations
+            # at the midpoint of the ray, put text with the distance
+            # from the player to the intersection
+            midpoint = (
+                shapely.LineString([player.pos, intersection])
+                .interpolate(0.5, normalized=True)
+                .coords[0]
+            )
+            # distance from player to intersection
+            distance = player.pos.distance_to(intersection)
+            text = font.render(str(int(distance)), True, "white")
+            screen.blit(text, midpoint)

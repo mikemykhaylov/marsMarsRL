@@ -1,9 +1,8 @@
 import numpy as np
-import opensimplex
 import shapely
 
-from entities.terrain import Terrain
 from entities.platform import Platform
+from entities.terrain import Terrain
 
 
 def generate_multioctave_noise(terrain: Terrain):
@@ -13,6 +12,7 @@ def generate_multioctave_noise(terrain: Terrain):
     for i in range(octaves):
         noise += (
             generate_noise(
+                terrain,
                 terrain.base_noise_scale * 2**i,
                 terrain.points_per_screen,
                 terrain.screen_offset,
@@ -22,14 +22,14 @@ def generate_multioctave_noise(terrain: Terrain):
     return noise
 
 
-def generate_noise(noise_scale, points_per_screen, screen_offset):
+def generate_noise(terrain, noise_scale, points_per_screen, screen_offset):
     xs = np.linspace(
         noise_scale * screen_offset,
         noise_scale * (screen_offset + 1),
         points_per_screen + 1,
     )
     xs = xs[:-1]
-    return opensimplex.noise2array(xs, np.array([0])).reshape(-1)
+    return terrain.noise_generator.noise2array(xs, np.array([0])).reshape(-1)
 
 
 def generate_platforms(terrain, start_point):
@@ -69,8 +69,7 @@ def bootstrap_terrain(terrain: Terrain):
     terrain.last_platform = last_platform
 
 
-def generate_terrain_factory(terrain: Terrain, seed: int):
-    opensimplex.seed(seed)
+def generate_terrain_factory(terrain: Terrain):
     terrain.x = np.linspace(0, 2, terrain.points_per_screen * 2 + 1)
     terrain.x = terrain.x[:-1]
     terrain.y = np.array([])
