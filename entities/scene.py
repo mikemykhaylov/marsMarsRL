@@ -162,7 +162,7 @@ class Scene:
             - pygame.Vector2(0, self.terrain.prev_player_platform.platform_height / 2)
         )
         observations["next_platform"] = np.array(
-            self.terrain.prev_player_platform.get_center()
-            - pygame.Vector2(0, self.terrain.prev_player_platform.platform_height / 2)
+            self.terrain.next_player_platform.get_center()
+            - pygame.Vector2(0, self.terrain.next_player_platform.platform_height / 2)
         )
         return observations
