@@ -2,13 +2,13 @@ import datetime
 
 import numpy as np
 import pygame
-import shapely
 
 from entities.player import Player
 from entities.terrain import Terrain
 from systems import (
     bootstrap_terrain,
     debug_raycasting,
+    generate_intersections,
     generate_terrain_factory,
     process_collisions,
     set_start_platform,
@@ -25,12 +25,13 @@ class Scene:
         self,
         render=True,
         interactive=True,
-        show_rays=False,
+        debug_raycasting=False,
         screen_dimensions=(1440, 900),
+        terrain_seed=None,
     ):
         self.render = render
         self.interactive = interactive
-        self.debug_raycasting = show_rays
+        self.debug_raycasting = debug_raycasting
         self.screen_dimensions = screen_dimensions
 
         if render is False and interactive is True:
@@ -46,9 +47,13 @@ class Scene:
             self.background = pygame.image.load("assets/background.jpg")
         self.dt = 0
 
-        random_seed = np.random.randint(0, 100000)
+        if terrain_seed is None:
+            terrain_seed = np.random.randint(0, 1000000)
+            print(f"Terrain seed not set, using random seed {terrain_seed}")
+        else:
+            print(f"Using terrain seed {terrain_seed}")
         self.player = Player(20, "#3D93AF", *self.screen_dimensions)
-        self.terrain = Terrain(200, random_seed, *self.screen_dimensions)
+        self.terrain = Terrain(200, terrain_seed, *self.screen_dimensions)
         self.iteration = 0
 
         # systems ran once
@@ -96,17 +101,15 @@ class Scene:
 
             if self.render:
                 self.draw()
-                pygame.display.flip()
-                self.dt = self.clock.tick(60) / 1000
-            else:
-                self.dt = 1 / 30
 
-            self.iteration += 1
-            if not self.render and self.iteration % 10000 == 0:
+            if not self.render and self.iteration % 1000 == 0:
                 end_time = datetime.datetime.now().timestamp()
                 print(f"FPS: {1000 / (end_time - start_time)}")
                 start_time = end_time
 
+        self.close()
+
+    def close(self):
         pygame.quit()
 
     def update(self, game_input: dict):
@@ -122,6 +125,8 @@ class Scene:
 
         update_terrain_offset(self.player, self.terrain)
         update_platform_status(self.player, self.terrain)
+
+        self.iteration += 1
 
     def draw(self):
         self.screen.blit(self.background, (0, 0))
@@ -139,6 +144,9 @@ class Scene:
         if self.debug_raycasting:
             debug_raycasting(self.screen, self.player, self.terrain, font)
 
+        pygame.display.flip()
+        self.dt = self.clock.tick(60) / 1000
+
     def produce_observations(self):
         observations = {
             "player_pos": np.array([self.player.pos.x, self.player.pos.y]),
@@ -146,38 +154,21 @@ class Scene:
             "fuel": self.player.fuel,
         }
 
-        ray_distances = np.array([])
+        intersections = generate_intersections()
+        ray_distances = []
 
-        for i in range(0, 360, 10):
-            unit_v = pygame.Vector2(0, -1000).rotate(i) + self.player.pos
-            # draw the line
-            ray = shapely.LineString([self.player.pos, unit_v])
-            intersection = self.terrain.terrain_intersects_shape(ray)
-            if intersection is not False:
-                # if it's LineString, get first point
-                # elif it's MultiLineString, get first point of first line
-
-                if isinstance(intersection, shapely.geometry.MultiLineString):
-                    intersection = intersection.geoms[0].coords[0]
-                elif isinstance(intersection, shapely.geometry.LineString):
-                    intersection = intersection.coords[0]
-
-                distance_to_intersection = self.player.pos.distance_to(intersection)
-                ray_distances = np.append(ray_distances, distance_to_intersection)
-            else:
-                ray_distances = np.append(ray_distances, 1000)
+        for intersection in intersections:
+            ray_distances.append(
+                self.player.pos.distance_to(pygame.Vector2(intersection))
+            )
 
         observations["distances"] = ray_distances
         observations["prev_platform"] = np.array(
-            [
-                self.terrain.prev_player_platform.pos.x,
-                self.terrain.prev_player_platform.pos.y,
-            ]
+            self.terrain.prev_player_platform.get_center()
+            - pygame.Vector2(0, self.terrain.prev_player_platform.platform_height / 2)
         )
         observations["next_platform"] = np.array(
-            [
-                self.terrain.next_player_platform.pos.x,
-                self.terrain.next_player_platform.pos.y,
-            ]
+            self.terrain.prev_player_platform.get_center()
+            - pygame.Vector2(0, self.terrain.prev_player_platform.platform_height / 2)
         )
         return observations

@@ -3,6 +3,7 @@ import shapely
 
 from entities.platform import Platform
 from entities.terrain import Terrain
+from systems.generate_polygon import generate_polygon
 
 
 def generate_multioctave_noise(terrain: Terrain):
@@ -64,6 +65,8 @@ def bootstrap_terrain(terrain: Terrain):
     terrain.screen_offset = 1
     terrain.y = np.append(terrain.y, generate_multioctave_noise(terrain))
 
+    generate_polygon(terrain)
+
     platforms, last_platform = generate_platforms(terrain, 26)
     terrain.platforms.update(platforms)
     terrain.last_platform = last_platform
@@ -78,6 +81,8 @@ def generate_terrain_factory(terrain: Terrain):
         terrain.screen_offset += 1
         terrain.y = np.append(terrain.y, generate_multioctave_noise(terrain))
         terrain.y = terrain.y[terrain.points_per_screen :]
+
+        generate_polygon(terrain)
 
         # Change the x coordinates to be the next screen
         terrain.last_platform -= terrain.points_per_screen

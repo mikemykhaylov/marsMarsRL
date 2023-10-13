@@ -3,6 +3,8 @@ import opensimplex
 import pygame
 import shapely
 
+from entities.platform import Platform
+
 
 class Terrain:
     def __init__(self, scaling, seed, scene_width, scene_height):
@@ -24,20 +26,28 @@ class Terrain:
         self.last_platform = 26
         self.screen_offset = 1
 
-        self.prev_player_platform = None
-        self.next_player_platform = None
+        self.prev_player_platform: Platform = None
+        self.next_player_platform: Platform = None
+
+        self.polygon = None
 
     def compute_points(self):
         scaled_x = self.x / self.x[-1] * self.scene_width * 2 - self.offset
         scaled_y = self.y * self.scaling + self.scene_height - 300
         scaled_y = np.clip(scaled_y, 0, self.scene_height - 1)
 
-        points = np.array([scaled_x, scaled_y]).T
-        # add two bottom corners to make a closed polygon
-        bottom_left = np.array([[points[0][0], self.scene_height]])
-        bottom_right = np.array([[points[-1][0], self.scene_height]])
+        # init points to 2d array of size (1 + n + 1, 2)
+        points = np.zeros((len(scaled_x) + 2, 2))
+        points[1:-1] = np.array([scaled_x, scaled_y]).T
 
-        return np.concatenate((bottom_left, points, bottom_right))
+        # add two bottom corners to make a closed polygon
+        # bottom_left = np.array([[points[0][0], self.scene_height]])
+        # bottom_right = np.array([[points[-1][0], self.scene_height]])
+
+        points[0] = np.array([points[1][0], self.scene_height])
+        points[-1] = np.array([points[-2][0], self.scene_height])
+
+        return points
 
     def draw(self, screen):
         points = self.compute_points()
@@ -48,12 +58,9 @@ class Terrain:
             platform.draw(screen)
 
     def player_intersects_terrain(self, player):
-        points = self.compute_points()
-
-        terrain_polygon = shapely.geometry.Polygon(points)
         player_circle = shapely.geometry.Point(player.pos).buffer(player.radius)
 
-        return terrain_polygon.intersects(player_circle)
+        return self.polygon.intersects(player_circle)
 
     def player_intersects_platform(self, player):
         for platform in self.platforms.values():
@@ -62,10 +69,7 @@ class Terrain:
         return False
 
     def terrain_intersects_shape(self, shape):
-        points = self.compute_points()
-        terrain_polygon = shapely.geometry.Polygon(points)
-
-        intersection = terrain_polygon.intersection(shape)
+        intersection = self.polygon.intersection(shape)
         if intersection.is_empty:
             return False
         return intersection

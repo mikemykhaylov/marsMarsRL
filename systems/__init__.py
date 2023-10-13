@@ -1,5 +1,6 @@
 from systems.calculate_reward import calculate_reward
 from systems.debug_raycasting import debug_raycasting
+from systems.generate_intersections import generate_intersections
 from systems.generate_terrain import bootstrap_terrain, generate_terrain_factory
 from systems.process_collisions import process_collisions
 from systems.set_start_platform import set_start_platform
@@ -21,4 +22,5 @@ __all__ = [
     "update_platform_status",
     "bootstrap_terrain",
     "debug_raycasting",
+    "generate_intersections",
 ]

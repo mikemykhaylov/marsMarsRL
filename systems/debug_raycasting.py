@@ -3,26 +3,21 @@ import shapely
 
 from entities.player import Player
 from entities.terrain import Terrain
+from systems.generate_intersections import generate_intersections
 
 
 def debug_raycasting(
     screen: pygame.Surface, player: Player, terrain: Terrain, font: pygame.font.Font
 ):
+    intersections = generate_intersections(player, terrain)
+
     for i in range(0, 360, 10):
         unit_v = pygame.Vector2(0, -1000).rotate(i) + player.pos
         # draw the line
         pygame.draw.aaline(screen, "white", player.pos, unit_v, 1)
-        ray = shapely.LineString([player.pos, unit_v])
-        intersection = terrain.terrain_intersects_shape(ray)
-        if intersection is not False:
-            # if it's LineString, get first point
-            # elif it's MultiLineString, get first point of first line
 
-            if isinstance(intersection, shapely.geometry.MultiLineString):
-                intersection = intersection.geoms[0].coords[0]
-            elif isinstance(intersection, shapely.geometry.LineString):
-                intersection = intersection.coords[0]
-
+        intersection = intersections[i // 10]
+        if intersection != unit_v:
             pygame.draw.circle(screen, "red", intersection, 5)
 
             # at the midpoint of the ray, put text with the distance
