@@ -7,6 +7,7 @@ from entities.terrain import Terrain
 
 def generate_intersections(player: Player, terrain: Terrain):
     intersections = []
+    distances = []
 
     for i in range(0, 360, 10):
         unit_v = pygame.Vector2(0, -1000).rotate(i) + player.pos
@@ -31,7 +32,9 @@ def generate_intersections(player: Player, terrain: Terrain):
                 intersection = intersection.coords[0]
 
             intersections.append(intersection)
+            distances.append(player.pos.distance_to(intersection))
         else:
-            intersections.append(unit_v)
+            intersections.append(player.pos)
+            distances.append(1000)
 
-    return intersections
+    return intersections, distances

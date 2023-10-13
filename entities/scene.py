@@ -154,15 +154,9 @@ class Scene:
             "fuel": self.player.fuel,
         }
 
-        intersections = generate_intersections()
-        ray_distances = []
+        _, distances = generate_intersections(self.player, self.terrain)
 
-        for intersection in intersections:
-            ray_distances.append(
-                self.player.pos.distance_to(pygame.Vector2(intersection))
-            )
-
-        observations["distances"] = ray_distances
+        observations["distances"] = distances
         observations["prev_platform"] = np.array(
             self.terrain.prev_player_platform.get_center()
             - pygame.Vector2(0, self.terrain.prev_player_platform.platform_height / 2)

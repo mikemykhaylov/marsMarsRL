@@ -9,7 +9,7 @@ from systems.generate_intersections import generate_intersections
 def debug_raycasting(
     screen: pygame.Surface, player: Player, terrain: Terrain, font: pygame.font.Font
 ):
-    intersections = generate_intersections(player, terrain)
+    intersections, _ = generate_intersections(player, terrain)
 
     for i in range(0, 360, 10):
         unit_v = pygame.Vector2(0, -1000).rotate(i) + player.pos
@@ -17,7 +17,7 @@ def debug_raycasting(
         pygame.draw.aaline(screen, "white", player.pos, unit_v, 1)
 
         intersection = intersections[i // 10]
-        if intersection != unit_v:
+        if intersection != player.pos:
             pygame.draw.circle(screen, "red", intersection, 5)
 
             # at the midpoint of the ray, put text with the distance
