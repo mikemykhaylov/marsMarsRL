@@ -29,6 +29,7 @@ class Scene:
         debug_raycasting=False,
         screen_dimensions=(1440, 900),
         terrain_seed=None,
+        verbose=False,
     ):
         self.render = render
         self.interactive = interactive
@@ -50,9 +51,11 @@ class Scene:
 
         if terrain_seed is None:
             terrain_seed = np.random.randint(0, 1000000)
-            print(f"Terrain seed not set, using random seed {terrain_seed}")
-        else:
+            if verbose:
+                print(f"Terrain seed not set, using random seed {terrain_seed}")
+        elif verbose:
             print(f"Using terrain seed {terrain_seed}")
+
         self.player = Player(20, "#3D93AF", *self.screen_dimensions)
         self.terrain = Terrain(200, terrain_seed, *self.screen_dimensions)
         self.iteration = 0
