@@ -3,9 +3,7 @@ import datetime
 import numpy as np
 import pygame
 
-from entities.player import Player
-from entities.terrain import Terrain
-from systems import (
+from mars_mars_env.systems import (
     bootstrap_terrain,
     debug_raycasting,
     generate_intersections,
@@ -18,6 +16,9 @@ from systems import (
     update_terrain_offset,
     update_velocity,
 )
+
+from .player import Player
+from .terrain import Terrain
 
 
 class Scene:

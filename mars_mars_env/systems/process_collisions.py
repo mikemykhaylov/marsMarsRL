@@ -1,8 +1,9 @@
 import pygame
 
-from entities.player import Player
-from entities.terrain import Terrain
-from systems.calculate_reward import calculate_reward
+from mars_mars_env.entities.player import Player
+from mars_mars_env.entities.terrain import Terrain
+
+from .calculate_reward import calculate_reward
 
 
 def process_collisions(player: Player, terrain: Terrain):

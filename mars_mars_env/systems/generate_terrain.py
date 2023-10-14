@@ -1,9 +1,10 @@
 import numpy as np
 import shapely
 
-from entities.platform import Platform
-from entities.terrain import Terrain
-from systems.generate_polygon import generate_polygon
+from mars_mars_env.entities.platform import Platform
+from mars_mars_env.entities.terrain import Terrain
+
+from .generate_polygon import generate_polygon
 
 
 def generate_multioctave_noise(terrain: Terrain):

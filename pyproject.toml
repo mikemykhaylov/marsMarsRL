@@ -1,2 +1,18 @@
+[project]
+name = "mars-mars-env"
+version = "0.0.1"
+description = "Gymnasium Env for Mars: Mars game"
+dependencies = [
+    "pygame >= 2.5.2",
+    "numpy >= 1.26",
+    "shapely >= 2.0.2",
+    "opensimplex >= 0.4.5",
+    "gymnasium >= 0.29.0"
+]
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
 [tool.isort]
 profile = "black"

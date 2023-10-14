@@ -1,6 +1,7 @@
-from entities.player import Player
-from entities.terrain import Terrain
-from systems.update_terrain_polygon import update_terrain_polygon
+from mars_mars_env.entities.player import Player
+from mars_mars_env.entities.terrain import Terrain
+
+from .update_terrain_polygon import update_terrain_polygon
 
 
 def update_terrain_offset(player: Player, terrain: Terrain):

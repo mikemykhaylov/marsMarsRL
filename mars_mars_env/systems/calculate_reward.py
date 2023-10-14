@@ -1,8 +1,8 @@
 import pygame
 
-from entities.platform import Platform
-from entities.player import Player
-from entities.terrain import Terrain
+from mars_mars_env.entities.platform import Platform
+from mars_mars_env.entities.player import Player
+from mars_mars_env.entities.terrain import Terrain
 
 
 def calculate_reward(player: Player, terrain: Terrain, platform: Platform | None):

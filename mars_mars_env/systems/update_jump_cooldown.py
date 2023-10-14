@@ -1,4 +1,4 @@
-from entities.player import Player
+from mars_mars_env.entities.player import Player
 
 
 def update_jump_cooldown(player: Player, dt):

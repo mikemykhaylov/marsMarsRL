@@ -3,7 +3,7 @@ import opensimplex
 import pygame
 import shapely
 
-from entities.platform import Platform
+from .platform import Platform
 
 
 class Terrain:

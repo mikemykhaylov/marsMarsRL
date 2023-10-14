@@ -1,5 +1,5 @@
-from entities.player import Player
-from entities.terrain import Terrain
+from mars_mars_env.entities.player import Player
+from mars_mars_env.entities.terrain import Terrain
 
 
 def update_platform_status(player: Player, terrain: Terrain):

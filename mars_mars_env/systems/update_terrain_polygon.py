@@ -1,6 +1,6 @@
 import shapely
 
-from entities.terrain import Terrain
+from mars_mars_env.entities.terrain import Terrain
 
 
 def update_terrain_polygon(terrain: Terrain, offset):

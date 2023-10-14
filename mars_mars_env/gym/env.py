@@ -6,7 +6,7 @@ import numpy as np
 from gymnasium import spaces
 from gymnasium.core import ObsType
 
-from entities import Scene
+from mars_mars_env.entities import Scene
 
 
 class MarsMarsEnv(gym.Env):
