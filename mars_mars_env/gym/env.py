@@ -12,10 +12,11 @@ from mars_mars_env.entities import Scene
 class MarsMarsEnv(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 60}
 
-    def __init__(self, render_mode=None, screen_dimensions=(1440, 900)):
+    def __init__(self, render_mode=None, screen_dimensions=(1440, 900), flatten=True):
         self.default_screen_dimensions = screen_dimensions
+        self.flatten = flatten
 
-        self.observation_space = spaces.Dict(
+        self._int_observation_space = spaces.Dict(
             {
                 "player_pos": spaces.Tuple(
                     (
@@ -29,7 +30,7 @@ class MarsMarsEnv(gym.Env):
                         spaces.Box(low=-50, high=50, dtype=np.float32),
                     )
                 ),
-                "fuel": spaces.Discrete(1001),
+                "fuel": spaces.Box(low=0, high=1000, shape=(1,), dtype=np.float32),
                 "distances": spaces.Box(
                     low=0, high=1000, shape=(36,), dtype=np.float32
                 ),
@@ -47,6 +48,8 @@ class MarsMarsEnv(gym.Env):
                 ),
             }
         )
+
+        self.observation_space = gym.spaces.flatten_space(self._int_observation_space)
 
         # jump, left, right, no-op
         self.action_space = spaces.Discrete(4)
@@ -115,7 +118,10 @@ class MarsMarsEnv(gym.Env):
         self.scene.close()
 
     def _get_obs(self):
-        return self.scene.produce_observations()
+        obs = self.scene.produce_observations()
+        if self.flatten:
+            obs = gym.spaces.flatten(self._int_observation_space, obs)
+        return obs
 
     def _get_reward(self):
         return self.scene.player.score
