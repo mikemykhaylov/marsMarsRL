@@ -15,7 +15,7 @@ class Player:
         self.terrain = None
 
         self.jump_cooldown = 0
-        self.fuel = 0
+        self.fuel = 1000
 
         self.ui_padding = 10
         self.fuel_bar_dimensions = (100, 25)
