@@ -46,7 +46,7 @@ class Scene:
                 self.screen_dimensions, flags, vsync=1
             )
             self.clock = pygame.time.Clock()
-            self.background = pygame.image.load("assets/background.jpg")
+            # self.background = pygame.image.load("assets/background.jpg")
         self.dt = 0
 
         if terrain_seed is None:
@@ -133,8 +133,8 @@ class Scene:
         self.iteration += 1
 
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
-
+        # self.screen.blit(self.background, (0, 0))
+        self.screen.fill("gray")
         self.terrain.draw(self.screen)
         self.player.draw(self.screen)
 
