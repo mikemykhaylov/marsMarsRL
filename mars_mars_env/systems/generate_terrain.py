@@ -55,7 +55,7 @@ def generate_platforms(terrain, start_point):
         platforms[i] = platform
         last_platform = i
         # skips 25 to 50 points
-        i += np.random.randint(35, 50)
+        i += np.random.randint(40, 60)
 
     return platforms, last_platform
 
@@ -94,7 +94,7 @@ def generate_terrain_factory(terrain: Terrain):
             if key >= terrain.points_per_screen
         }
 
-        start_point = terrain.last_platform + np.random.randint(35, 50)
+        start_point = terrain.last_platform + np.random.randint(40, 60)
         platforms, last_platform = generate_platforms(terrain, start_point)
         terrain.platforms.update(platforms)
         terrain.last_platform = last_platform
