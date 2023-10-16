@@ -33,7 +33,7 @@ class Terrain:
 
     def compute_points(self):
         scaled_x = self.x / self.x[-1] * self.scene_width * 2 - self.offset
-        scaled_y = self.y * self.scaling + self.scene_height - 300
+        scaled_y = self.y * self.scaling + self.scene_height - 200
         scaled_y = np.clip(scaled_y, 0, self.scene_height - 1)
 
         # init points to 2d array of size (1 + n + 1, 2)
