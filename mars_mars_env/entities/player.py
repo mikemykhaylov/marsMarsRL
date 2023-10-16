@@ -20,7 +20,6 @@ class Player:
         self.ui_padding = 10
         self.fuel_bar_dimensions = (100, 25)
         self.fuel_bar_border = 5
-        self.fuel_surface = pygame.Surface((90, 15))
 
         self.score = 0
 
@@ -33,6 +32,8 @@ class Player:
         pygame.draw.circle(screen, self.color, self.pos, self.radius)
 
     def draw_fuel(self, screen):
+        fuel_surface = pygame.Surface((90, 15))
+
         fuel_bar_pos = (self.scene_width - 100 - self.ui_padding, self.ui_padding)
 
         pygame.draw.rect(
@@ -42,10 +43,10 @@ class Player:
             self.fuel_bar_border,
         )
 
-        self.fuel_surface.set_alpha(64)
-        self.fuel_surface.fill("black")
+        fuel_surface.set_alpha(64)
+        fuel_surface.fill("black")
         screen.blit(
-            self.fuel_surface,
+            fuel_surface,
             (
                 fuel_bar_pos[0] + self.fuel_bar_border,
                 fuel_bar_pos[1] + self.fuel_bar_border,
