@@ -106,13 +106,13 @@ class MarsMarsEnv(gym.Env):
         truncated = self._get_truncated()
         info = self._get_info()
 
-        self.render()
+        if self.render_mode is not None:
+            self.render()
 
         return observation, reward, terminated, truncated, info
 
     def render(self):
-        if self.render_mode == "human":
-            self.scene.draw()
+        self.scene.draw()
 
     def close(self):
         self.scene.close()
@@ -127,7 +127,9 @@ class MarsMarsEnv(gym.Env):
         return self.scene.player.score
 
     def _get_terminated(self):
-        return self.scene.terrain.player_intersects_terrain(self.scene.player)
+        return self.scene.terrain.player_intersects_terrain(self.scene.player) or (
+            self.scene.player.pos.y > self.scene.player.scene_height
+        )
 
     def _get_truncated(self):
         return self.scene.iteration >= 10000
