@@ -1,0 +1,10 @@
+black==23.9.1
+gymnasium==0.29.1
+isort==5.12.0
+-e git+https://github.com/mikemykhaylov/marsMarsRL.git@60f1aa0fcf0b8d510af788db7caeeb24589919e3#egg=mars_mars_env
+numpy==1.26.0
+opensimplex==0.4.5
+pygame==2.5.2
+ruff==0.0.292
+scalene==1.5.31.1
+shapely==2.0.2
