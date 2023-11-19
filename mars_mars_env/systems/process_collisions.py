@@ -23,11 +23,8 @@ def process_collisions(player: Player, terrain: Terrain):
         0, platform.platform_height / 2 + player.radius
     )
 
-    if platform.visited:
-        calculate_reward(player, terrain, None)
-    else:
-        calculate_reward(player, terrain, platform)
-
+    calculate_reward(player, terrain, platform)
+    if not platform.visited:
         platform.visited = True
 
         terrain.prev_player_platform = platform

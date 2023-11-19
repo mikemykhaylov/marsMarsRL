@@ -10,7 +10,7 @@ def calculate_reward(player: Player, terrain: Terrain, platform: Platform | None
     if terrain.player_intersects_terrain(player):
         player.score = -100
     # if the player touched a platform, give a reward
-    elif platform:
+    elif platform and not platform.visited:
         # if player is moving too fast, they crash and get a negative reward
         if player.vel.length() > 5:
             player.score = -5 - player.vel.length()
